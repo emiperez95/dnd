@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+  </head>
+  <body>
+    <div id="mapid" style="display: flex; width: 100%; height: 800px; min-width: 800; min-width: 600;"></div>
+    <script>
+
+    var map = L.map('mapid', { crs: L.CRS.Simple, minZoom: -3});
+    
+    // Get markers from dn
+    // for (var i in positions) {
+    //     new L.marker([positions[i].lat, positions[i].lng]).addTo(map);
+    // }  
+
+    // Base map
+    var bounds = [[0,0], [6600,10200]];
+    var image = L.imageOverlay('/static/map.jpg', bounds).addTo(map)
+    map.fitBounds(bounds)
+
+    // Phandelver
+    var bounds2 = [[5666, 3907], [4736, 4648]];
+    var image2 = L.imageOverlay('/static/phandelver.jpg', bounds2)
+
+    // Dessarin valley
+    var bounds3 = [[5280.5, 4485], [4301, 5257]];
+    var image3 = L.imageOverlay('/static/dessarin_valley.jpg', bounds3)
+
+    var marker = L.marker([0, 0], {riseOnHover: true});
+    marker.bindTooltip("Short description");
+
+
+
+    var cities = L.layerGroup([marker])
+
+    // Ping getter
+    map.on('click', function(e){
+        // Place marker
+        var remarker = new L.marker(e.latlng, {riseOnHover: true}).addTo(map);
+        var person = prompt("Please enter ping name", "Harry Potter");
+        remarker.bindTooltip(person);
+
+        // remarker.bindPopup(popupContent).openPopup();
+
+        let btn = document.createElement('button');
+        btn.innerText = 'Delete Marker';
+        btn.onclick =  function() {
+            map.removeLayer(remarker);
+        }
+
+        remarker.bindPopup(btn, {
+            maxWidth: 'auto'
+        });
+
+        // Ajax query to save the values:
+        var data = {
+            lat: e.latlng.lat,
+            lng: e.latlng.lng,
+            name: person,
+        }
+
+        cities.addLayer(remarker)
+
+        // var request = new XMLHttpRequest();
+        //     request.open('POST', '/my/url', true);
+        //     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        //     request.send(data);
+    });
+
+    // Layer selector
+    var baseMaps = {
+    };
+    var overlayMaps = {
+        "markers": cities,
+        "Phandelver": image2,
+        "Dessarin Valley": image3
+    };
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+    // Util for right click to get coords
+    var lat, lng;
+
+    map.addEventListener('mousemove', function(ev) {
+    lat = ev.latlng.lat;
+    lng = ev.latlng.lng;
+    z = ev.latlng.z;
+    });
+
+    document.getElementById("mapid").addEventListener("contextmenu", function (event) {
+        // Prevent the browser's context menu from appearing
+        event.preventDefault();
+
+        // Add marker
+        // L.marker([lat, lng], ....).addTo(map);
+        alert(lat + ', ' + lng );
+
+        return false; // To disable default popup.
+    });
+    </script>
+  </body>
+</html>

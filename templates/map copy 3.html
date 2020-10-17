@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+  </head>
+  <body>
+    <div id="mapid" style="display: flex; width: 100%; height: 800px; min-width: 800; min-width: 600;"></div>
+    <script>
+      // var cities = L.layerGroup([])
+      
+      var map = L.map('mapid', { crs: L.CRS.Simple, minZoom: -3});
+      map.createPane('labels');
+      map.getPane('labels').style.zIndex = 650;
+      map.getPane('labels').style.pointerEvents = 'none';
+
+
+      var bounds = [[0,0], [6600,10200]];
+      var image = L.imageOverlay('/static/map.jpg', bounds).addTo(map)
+
+      var bounds2 = [[5654, 3939], [4764, 4615]];
+      var image2 = L.imageOverlay('/static/phandelver.jpg', bounds2, {pane: 'labels'})
+      map.fitBounds(bounds)
+
+      map.fitBounds(bounds2)
+
+
+      // var baseMaps = {
+      //     "Continent": image,
+      //     "Phandelver": image2
+      // };
+      // // var overlayMaps = {
+      // //     "Cities": cities
+      // // };
+      // L.control.layers(baseMaps).addTo(map);
+
+
+
+      var lat, lng;
+
+      map.addEventListener('mousemove', function(ev) {
+        lat = ev.latlng.lat;
+        lng = ev.latlng.lng;
+        z = ev.latlng.z;
+      });
+
+      document.getElementById("mapid").addEventListener("contextmenu", function (event) {
+          // Prevent the browser's context menu from appearing
+          event.preventDefault();
+
+          // Add marker
+          // L.marker([lat, lng], ....).addTo(map);
+          alert(lat + ' - ' + lng + ' - ' + z);
+
+          return false; // To disable default popup.
+      });
+    </script>
+  </body>
+</html>
